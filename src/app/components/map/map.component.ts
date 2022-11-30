@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { Map, View } from 'ol';
 import DayNight from 'ol-ext/source/DayNight';
+import Zoom from 'ol/control/Zoom';
 import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import { fromLonLat } from 'ol/proj';
@@ -42,6 +43,7 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   createInitialMap() {
     this.map = new Map({
+      controls: [],
       target: this.mapRef?.nativeElement,
       layers: [this.baselayer],
       view: new View({
@@ -49,6 +51,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         zoom: 1,
       }),
     });
+    this.map.addControl(new Zoom());
   }
 
   generateDayNightLayer() {
