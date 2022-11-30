@@ -6,9 +6,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Map, View } from 'ol';
+import DayNight from 'ol-ext/source/DayNight';
 import TileLayer from 'ol/layer/Tile';
+import VectorLayer from 'ol/layer/Vector';
 import { fromLonLat } from 'ol/proj';
 import { XYZ } from 'ol/source';
+import Fill from 'ol/style/Fill';
+import Style from 'ol/style/Style';
 
 @Component({
   selector: 'app-map',
@@ -35,5 +39,16 @@ export class MapComponent implements OnInit, AfterViewInit {
         zoom: 4,
       }),
     });
+
+    this.map.addLayer(
+      new VectorLayer({
+        source: new DayNight({}),
+        style: new Style({
+          fill: new Fill({
+            color: [0, 0, 50, 0.5],
+          }),
+        }),
+      })
+    );
   }
 }
