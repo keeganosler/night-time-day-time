@@ -1,3 +1,23 @@
 <div class="position-relative" style="height: 100vh">
-  <div #map style="height: 100%; width: 100%"></div>
+  <div #map style="height: 100%; width: 100%">
+    <div
+      style="
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        z-index: 1000;
+      "
+    >
+      <mat-slider
+        [max]="23.99"
+        [min]="0"
+        [discrete]="true"
+        [showTickMarks]="true"
+      >
+        <input [formControl]="timeFormControl" matSliderThumb />
+      </mat-slider>
+    </div>
+  </div>
 </div>

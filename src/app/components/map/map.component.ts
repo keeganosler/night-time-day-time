@@ -5,6 +5,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Map, View } from 'ol';
 import DayNight from 'ol-ext/source/DayNight';
 import Zoom from 'ol/control/Zoom';
@@ -15,7 +16,7 @@ import { XYZ } from 'ol/source';
 import VectorSource from 'ol/source/Vector';
 import Fill from 'ol/style/Fill';
 import Style from 'ol/style/Style';
-import { interval } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-map',
@@ -30,15 +31,30 @@ export class MapComponent implements OnInit, AfterViewInit {
       url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
     }),
   });
+  timeFormControl: FormControl<number> = new FormControl();
+  intervalSub: Subscription = new Subscription();
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.timeFormControl.valueChanges.subscribe((val) => {
+      this.onSetNewTime(val);
+    });
+  }
 
   ngAfterViewInit(): void {
     this.createInitialMap();
     this.generateDayNightLayer();
-    interval(30000).subscribe(() => {
+    this.intervalSub = interval(30000).subscribe(() => {
       this.generateDayNightLayer();
     });
+  }
+
+  onSetNewTime(hoursAheadOfCurrent: number) {
+    if (this.intervalSub) {
+      this.intervalSub.unsubscribe();
+    }
+    let currentDate: Date = new Date();
+    currentDate.setTime(currentDate.getTime() + hoursAheadOfCurrent * 3600000);
+    this.generateDayNightLayer(currentDate);
   }
 
   createInitialMap() {
@@ -54,10 +70,10 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.map.addControl(new Zoom());
   }
 
-  generateDayNightLayer() {
+  generateDayNightLayer(time?: Date) {
     let dayNightLayer: VectorLayer<VectorSource> = new VectorLayer({
       source: new DayNight({
-        time: new Date(),
+        time: time ? time : new Date(),
       }),
       style: new Style({
         fill: new Fill({
