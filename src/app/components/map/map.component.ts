@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -52,9 +53,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     if (this.intervalSub) {
       this.intervalSub.unsubscribe();
     }
-    let currentDate: Date = new Date();
-    currentDate.setTime(currentDate.getTime() + hoursAheadOfCurrent * 3600000);
-    this.generateDayNightLayer(currentDate);
+    this.generateDayNightLayer(this.getTimeAhead(hoursAheadOfCurrent));
   }
 
   createInitialMap() {
@@ -93,5 +92,18 @@ export class MapComponent implements OnInit, AfterViewInit {
         }
       });
     this.map?.addLayer(dayNightLayer);
+  }
+
+  formatThumbLabel(value: number): string {
+    // TODO this formatter should also use getTimeAhead()
+    let currentDate: Date = new Date();
+    currentDate.setTime(currentDate.getTime() + value * 3600000);
+    return formatDate(currentDate.getTime(), 'h:mm', 'en');
+  }
+
+  getTimeAhead(hoursAheadOfCurrent: number): Date {
+    let currentDate: Date = new Date();
+    currentDate.setTime(currentDate.getTime() + hoursAheadOfCurrent * 3600000);
+    return currentDate;
   }
 }
